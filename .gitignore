@@ -1,0 +1,5 @@
+vmouse/
+__pycache__/
+*.pyc
+captured_frames/
+saved_videos/
