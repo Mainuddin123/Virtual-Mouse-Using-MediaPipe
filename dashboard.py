@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 
-
 # =====================================
 # Page Configuration
 # =====================================
@@ -12,23 +11,86 @@ st.set_page_config(
     layout="wide"
 )
 
+# =====================================
+# Custom CSS
+# =====================================
+
+st.markdown("""
+<style>
+
+.stApp {
+    background: linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b,
+        #334155
+    );
+    color: white;
+}
+
+h1,h2,h3 {
+    color: #f8fafc !important;
+}
+
+div[data-testid="stMetric"] {
+    background-color: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #475569;
+}
+
+.block-container {
+    padding-top: 2rem;
+}
+
+.custom-card {
+    background-color: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 20px;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,0.08);
+    margin-top: 40px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # =====================================
 # Header
 # =====================================
 
-st.title("🖱 AI Virtual Mouse")
+st.markdown("""
+<h1 style='text-align:center;'>
+🖱 AI Virtual Mouse
+</h1>
+""", unsafe_allow_html=True)
 
-st.markdown("---")
+st.markdown("""
+<div class='custom-card'>
+<h3>🚀 Computer Vision Project</h3>
 
+Control your computer mouse using hand gestures with
+OpenCV, MediaPipe and Python.
+
+</div>
+""", unsafe_allow_html=True)
 
 # =====================================
 # Project Overview
 # =====================================
 
-st.header("Project Overview")
+st.header("📌 Project Overview")
 
-st.write("""
+st.markdown("""
+<div class='custom-card'>
+
 This project uses:
 
 - OpenCV
@@ -38,78 +100,73 @@ This project uses:
 - Video Recording
 - Frame Capture
 - Real-Time Processing
-""")
 
+</div>
+""", unsafe_allow_html=True)
 
 # =====================================
 # Supported Gestures
 # =====================================
 
-st.header("Supported Gestures")
+st.header("🤚 Supported Gestures")
 
-st.write("👉 Index Finger → Cursor Movement")
+st.markdown("""
+<div class='custom-card'>
 
-st.write("👌 Thumb + Index Finger → Left Click")
+👉 Index Finger → Cursor Movement
 
-st.write("👍 Thumb + Middle Finger → Right Click")
+👌 Thumb + Index Finger → Left Click
 
-st.write("🤏 Thumb + Ring Finger → Drag")
+👍 Thumb + Middle Finger → Right Click
 
-st.write("✌ Index + Middle Finger → Scroll")
+🤏 Thumb + Ring Finger → Drag
 
+✌ Index + Middle Finger → Scroll
+
+</div>
+""", unsafe_allow_html=True)
 
 # =====================================
-# Project Workflow
+# Workflow
 # =====================================
 
-st.header("Project Workflow")
+st.header("⚙ Project Workflow")
 
-st.write("""
-### Workflow Steps
+st.markdown("""
+<div class='custom-card'>
 
-1. Capture live webcam feed
+1️⃣ Capture Webcam Feed
 
-2. Preprocess frames
-   - Resize
-   - Flip
-   - Blur
+2️⃣ Preprocess Frames
 
-3. Detect hand landmarks using MediaPipe
+3️⃣ Detect Hand Landmarks
 
-4. Recognize gestures
+4️⃣ Recognize Gestures
 
-5. Perform mouse actions
-   - Cursor Movement
-   - Left Click
-   - Right Click
-   - Drag
-   - Scroll
+5️⃣ Execute Mouse Actions
 
-6. Save frames
+6️⃣ Save Frames
 
-7. Record video
+7️⃣ Record Video
 
-8. Display results in dashboard
-""")
+8️⃣ Display Dashboard Results
 
+</div>
+""", unsafe_allow_html=True)
 
 # =====================================
 # Captured Frames
 # =====================================
 
-st.markdown("---")
-
 st.header("📸 Captured Frames")
-
-frame_folder = Path("captured_frames")
 
 frames = []
 
+frame_folder = Path("captured_frames")
+
 if frame_folder.exists():
 
-    frames = sorted(
-        frame_folder.glob("*.jpg")
-    )
+    frames = sorted(frame_folder.glob("*.jpg"))
 
     st.success(
         f"Total Frames Saved: {len(frames)}"
@@ -117,33 +174,25 @@ if frame_folder.exists():
 
     if len(frames) > 0:
 
-        latest_frame = frames[-1]
-
         st.image(
-            str(latest_frame),
+            str(frames[-1]),
             caption="Latest Captured Frame",
             use_container_width=True
         )
 
-    else:
-
-        st.warning(
-            "No frames available."
-        )
-
 else:
 
-    st.error(
-        "captured_frames folder not found."
+    st.info(
+        "Captured frames not available on cloud deployment."
     )
 
-
 # =====================================
-# Recorded Videos
+# Videos
 # =====================================
 
-st.markdown("---")
 st.header("🎥 Recorded Videos")
+
+videos = []
 
 video_folder = Path("saved_videos")
 
@@ -151,98 +200,108 @@ if video_folder.exists():
 
     videos = list(video_folder.glob("*.mp4"))
 
-    if videos:
+    if len(videos) > 0:
 
         selected_video = st.selectbox(
             "Select Video",
             [v.name for v in videos]
         )
 
-        video_path = video_folder / selected_video
+        with open(
+            video_folder / selected_video,
+            "rb"
+        ) as f:
 
-        st.write("Path:", video_path)
-        st.write("Exists:", video_path.exists())
-        st.write("Size:", video_path.stat().st_size, "bytes")
-
-        with open(video_path, "rb") as f:
-            video_bytes = f.read()
-
-        st.video(video_bytes)
-
-    else:
-        st.warning("No videos found.")
+            st.video(f.read())
 
 else:
-    st.error("saved_videos folder not found.")
+
+    st.info(
+        "Recorded videos not available on cloud deployment."
+    )
 
 # =====================================
-# Project Statistics
+# Statistics
 # =====================================
-
-st.markdown("---")
 
 st.header("📊 Project Statistics")
 
 col1, col2 = st.columns(2)
 
 with col1:
-
     st.metric(
         "Frames Saved",
         len(frames)
     )
 
 with col2:
-
     st.metric(
         "Videos Recorded",
         len(videos)
     )
 
-
 # =====================================
-# Project Features
+# Features
 # =====================================
 
-st.markdown("---")
+st.header("🚀 Key Features")
 
-st.header("🚀 Features")
+st.markdown("""
+<div class='custom-card'>
 
-st.write("""
 ✔ Real-Time Hand Tracking
 
-✔ Cursor Control using Index Finger
+✔ Cursor Movement
 
 ✔ Left Click Gesture
 
 ✔ Right Click Gesture
 
-✔ Drag and Drop Gesture
+✔ Drag & Drop
 
-✔ Scroll Gesture
+✔ Scroll Control
 
-✔ Frame Saving
+✔ Frame Capture
 
 ✔ Video Recording
 
 ✔ Streamlit Dashboard
 
-✔ Modular Project Structure
-""")
+✔ Modular Architecture
 
+</div>
+""", unsafe_allow_html=True)
+
+# =====================================
+# Demo Video
+# =====================================
+
+demo_video = Path("refe.mp4")
+
+if demo_video.exists():
+
+    st.header("🎬 Demo Video")
+
+    st.video(str(demo_video))
 
 # =====================================
 # Footer
 # =====================================
 
-st.markdown("---")
+st.markdown("""
+<div class='footer'>
 
-st.success(
-    " Virtual Mouse Project Successfully Running"
-)
+<h3>💻 Deployed By Khaja Mainuddin</h3>
 
-st.info(
-    "Run app.py or test_camera_controller.py to control your system mouse using hand gestures."
-)
+<p>
+Artificial Intelligence & Data Science Student
+</p>
 
-st.video("refe.mp4")
+<p>
+Built using Python • OpenCV • MediaPipe • Streamlit
+</p>
+
+⭐ Thank You For Visiting ⭐
+
+</div>
+""", unsafe_allow_html=True)
